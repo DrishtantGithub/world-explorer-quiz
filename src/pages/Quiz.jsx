@@ -31,16 +31,36 @@ export default function Quiz() {
       : COUNTRIES.filter(c => c.continent === region || c.subregion?.includes(region));
 
     const shuffled = [...filtered].sort(() => Math.random() - 0.5).slice(0, length);
-    const qs = shuffled.map(country => generateQuestion(category, [country], []));
-    // Re-generate options from full pool for better wrong answers
-    const finalQs = shuffled.map((country, i) => generateQuestion(category, COUNTRIES, shuffled.filter((_, j) => j !== i).map(c => c.code)));
-    // Use country-specific question but with full pool options
+    
+    // Build questions with correct answer options
     const built = shuffled.map(country => {
-      const q = generateQuestion(category, COUNTRIES, shuffled.filter(c => c.code !== country.code).map(c => c.code));
-      if (!q) return null;
       const catDef = QUIZ_CATEGORIES.find(c => c.id === category);
       const qData = catDef.questionFn(country);
-      return { ...q, ...qData, country, options: q.options };
+      
+      // Generate wrong options from other countries
+      const otherCountries = COUNTRIES.filter(c => c.code !== country.code)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+      
+      let wrongAnswers;
+      if (category === "flags") {
+        wrongAnswers = otherCountries.map(c => c.name);
+      } else if (category === "capitals") {
+        wrongAnswers = otherCountries.map(c => c.capital);
+      } else if (category === "currencies") {
+        wrongAnswers = otherCountries.map(c => c.currency);
+      } else if (category === "populations") {
+        wrongAnswers = otherCountries.map(c => new Intl.NumberFormat().format(c.population));
+      } else if (category === "continents") {
+        const continents = ["Asia", "Europe", "Africa", "North America", "South America", "Oceania"];
+        wrongAnswers = continents.filter(c => c !== qData.answer).sort(() => Math.random() - 0.5).slice(0, 3);
+      } else if (category === "languages") {
+        wrongAnswers = otherCountries.map(c => c.languages[0]);
+      }
+      
+      const options = [qData.answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+      
+      return { ...qData, country, options, categoryId: category };
     }).filter(Boolean);
 
     setQuestions(built.slice(0, length));
