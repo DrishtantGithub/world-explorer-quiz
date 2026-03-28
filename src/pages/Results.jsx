@@ -15,7 +15,7 @@ export default function Results() {
     return null;
   }
 
-  const { category, score, total, accuracy, streak, duration, answers, mode } = session;
+  const { category, score, positiveScore, negativeScore, total, accuracy, streak, duration, answers, mode } = session;
   const cat = QUIZ_CATEGORIES.find(c => c.id === category);
   const isPerfect = accuracy === 100;
   const isGood = accuracy >= 70;
@@ -97,8 +97,8 @@ export default function Results() {
             {/* Stats row */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
               {[
-                { icon: '✅', label: 'Correct', value: score },
-                { icon: '❌', label: 'Wrong', value: total - score },
+                { icon: '✅', label: 'Correct', value: positiveScore || score },
+                { icon: '❌', label: 'Wrong', value: negativeScore || (total - score) },
                 { icon: '🔥', label: 'Best Streak', value: streak },
                 { icon: '⏱️', label: 'Time', value: formatTime(duration) },
               ].map(s => (

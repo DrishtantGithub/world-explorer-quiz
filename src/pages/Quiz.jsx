@@ -182,13 +182,13 @@ export default function Quiz() {
             background: 'var(--success-dim)', border: '1px solid rgba(74,222,128,0.3)',
             borderRadius: 8, padding: '6px 14px', fontSize: 13, color: 'var(--success)', fontWeight: 600,
           }}>
-            ✓ {currentSession?.score || 0}
+            ✓ {currentSession?.positiveScore || 0}
           </div>
           <div style={{
             background: 'var(--error-dim)', border: '1px solid rgba(248,113,113,0.3)',
             borderRadius: 8, padding: '6px 14px', fontSize: 13, color: 'var(--error)', fontWeight: 600,
           }}>
-            ✗ {current - (currentSession?.score || 0)}
+            ✗ {currentSession?.negativeScore || 0}
           </div>
         </div>
 

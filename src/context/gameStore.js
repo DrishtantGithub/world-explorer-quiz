@@ -23,7 +23,9 @@ export const useGameStore = create(
             category,
             mode,
             total,
-            score: 0,
+            positiveScore: 0,
+            negativeScore: 0,
+            score: 0, // For backward compatibility
             streak: 0,
             maxStreak: 0,
             answers: [],
@@ -38,11 +40,15 @@ export const useGameStore = create(
 
         const newStreak = isCorrect ? session.streak + 1 : 0;
         const newMaxStreak = Math.max(session.maxStreak, newStreak);
+        const newPositiveScore = isCorrect ? session.positiveScore + 1 : session.positiveScore;
+        const newNegativeScore = isCorrect ? session.negativeScore : session.negativeScore + 1;
 
         set({
           currentSession: {
             ...session,
-            score: isCorrect ? session.score + 1 : session.score,
+            positiveScore: newPositiveScore,
+            negativeScore: newNegativeScore,
+            score: newPositiveScore, // For backward compatibility
             streak: newStreak,
             maxStreak: newMaxStreak,
             answers: [
